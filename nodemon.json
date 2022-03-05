@@ -1,0 +1,7 @@
+{
+  "watch": [
+    "tsconfig.json",
+    "app/app.ts",
+    "app/helpers/hotRequire.ts"
+  ]
+}
