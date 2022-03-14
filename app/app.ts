@@ -1,26 +1,23 @@
 import 'tsconfig-paths/register';
 import 'reflect-metadata';
-import Koa from 'koa';
 import { hotRequire } from 'app/helpers/helpers';
-import type { IBattle } from 'app/types/types';
+import { IKoaModule, IRouter, IRouterContext } from 'app/types/types';
 
-const hotMainContainer = hotRequire<typeof import('app/config/main-container.config')>(
+const hotContainer = hotRequire<typeof import('app/config/main-container.config')>(
   'app/config/main-container.config',
 );
-const hotConstants =
-  hotRequire<typeof import('app/constants/constants')>('app/constants/constants');
+const hotId = hotRequire<typeof import('app/constants/service-id')>('app/constants/service-id');
 
-const app = new Koa();
-const container = hotMainContainer.module.createContainer();
+const bootstrap = (port: number): void => {
+  const container = hotContainer.m.createContainer();
+  const Koa = container.get<IKoaModule>(hotId.m.ModuleId.KOA).default;
 
-app.use((ctx) => {
-  const { ServiceIdentifier } = hotConstants.module;
-  const epicBattle = container.get<IBattle>(ServiceIdentifier.Battle.EPIC_BATTLE);
-  const message = epicBattle.fight();
-  console.log(message);
-  ctx.body = message;
-});
+  new Koa()
+    .use((ctx: IRouterContext, next) => {
+      const rootRouter = container.get<IRouter>(hotId.m.RouterId.ROOT_ROUTER);
+      rootRouter.router.routes()(ctx, next);
+    })
+    .listen(port, () => console.log(`Server running on http://localhost:${port}`));
+};
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});
+bootstrap(3000);

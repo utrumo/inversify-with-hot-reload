@@ -1,12 +1,14 @@
 import { inject, injectable } from 'inversify';
-import { ServiceIdentifier } from 'app/constants/constants';
+import { hotRequire } from 'app/helpers/helpers';
 import type { IBattle, IWarrior } from 'app/types/types';
+
+const hotId = hotRequire<typeof import('app/constants/service-id')>('app/constants/service-id');
 
 @injectable()
 export class EpicBattle implements IBattle {
   constructor(
-    @inject(ServiceIdentifier.Warrior.NINJA) private readonly _warrior1: IWarrior,
-    @inject(ServiceIdentifier.Warrior.SAMURAI) private readonly _warrior2: IWarrior,
+    @inject(hotId.m.WarriorId.NINJA) private readonly _warrior1: IWarrior,
+    @inject(hotId.m.WarriorId.SAMURAI) private readonly _warrior2: IWarrior,
   ) {}
 
   public fight() {

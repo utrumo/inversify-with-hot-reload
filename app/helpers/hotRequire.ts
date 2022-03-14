@@ -2,7 +2,7 @@ import path from 'path';
 import chokidar from 'chokidar';
 
 type IRequestedModule = unknown;
-type IModuleContainer<T extends IRequestedModule> = { module: T };
+type IModuleContainer<T extends IRequestedModule> = { m: T };
 type IOnLoadModule<T extends IRequestedModule> = (module: T) => void;
 type ICbRecord = {
   cbOwner: string;
@@ -70,8 +70,8 @@ export class HotRequire {
     const requestedModule: IRequestedModule = require(absolutePath);
 
     if (!this._ModulePathModuleContainer[absolutePath])
-      this._ModulePathModuleContainer[absolutePath] = { module: requestedModule };
-    else this._ModulePathModuleContainer[absolutePath].module = requestedModule;
+      this._ModulePathModuleContainer[absolutePath] = { m: requestedModule };
+    else this._ModulePathModuleContainer[absolutePath].m = requestedModule;
 
     if (isAdd) console.log(`Module successfull loaded: ${absolutePath}`);
     else console.log(`Module successfull reloaded: ${absolutePath}`);
@@ -93,13 +93,13 @@ export class HotRequire {
     watcher.on('add', (modulePath) => {
       const moduleContainer = this.loadModule(modulePath, true);
       this.watchChanges(absolutePath);
-      cbRecords?.forEach((it) => it.onLoadModule(moduleContainer.module));
+      cbRecords?.forEach((it) => it.onLoadModule(moduleContainer.m));
     });
 
     watcher.on('change', (modulePath) => {
       const moduleContainer = this.loadModule(modulePath, false);
       this.watchChanges(absolutePath);
-      cbRecords?.forEach((it) => it.onLoadModule(moduleContainer.module));
+      cbRecords?.forEach((it) => it.onLoadModule(moduleContainer.m));
     });
 
     watcher.on('unlink', (modulePath) => {
@@ -139,7 +139,7 @@ export class HotRequire {
       this.watchChanges(absolutePath);
     }
 
-    if (onLoadModule) onLoadModule(moduleContainer.module as T);
+    if (onLoadModule) onLoadModule(moduleContainer.m as T);
 
     return moduleContainer as IModuleContainer<T>;
   }
