@@ -1,5 +1,5 @@
 {
-  "name": "iocexperiments",
+  "name": "inversify-with-hot-reload",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@koa/router": "^10.1.1",
     "chokidar": "^3.5.3",

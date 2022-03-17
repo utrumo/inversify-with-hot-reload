@@ -10,6 +10,8 @@ type ICbRecord = {
 };
 
 export class HotRequire {
+  ['constructor']: typeof HotRequire;
+
   protected static getCallsites(): NodeJS.CallSite[] {
     const backup = Error.prepareStackTrace;
     Error.prepareStackTrace = (_, callSites) => callSites;
@@ -112,8 +114,7 @@ export class HotRequire {
   }
 
   protected addOnLoadCb(absolutePath: string, onLoadModule: IOnLoadModule<IRequestedModule>): void {
-    const constructor = this.constructor as typeof HotRequire;
-    const cbOwner = constructor.getCallerFileName();
+    const cbOwner = this.constructor.getCallerFileName();
 
     if (!this._ModulePathCbRecords[absolutePath]) this._ModulePathCbRecords[absolutePath] = [];
     const cbRecords = this._ModulePathCbRecords[absolutePath];
@@ -126,8 +127,7 @@ export class HotRequire {
     modulePath: string,
     onLoadModule?: IOnLoadModule<T>,
   ): IModuleContainer<T> {
-    const constructor = this.constructor as typeof HotRequire;
-    const absolutePath = constructor.getAbsolutePath(modulePath);
+    const absolutePath = this.constructor.getAbsolutePath(modulePath);
 
     let moduleContainer = this._ModulePathModuleContainer[absolutePath];
     if (!moduleContainer) moduleContainer = this.loadModule(absolutePath, true);
